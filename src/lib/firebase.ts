@@ -1,15 +1,15 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
 // Firebase configuration - these are publishable keys (safe for client-side)
 // Replace with your Firebase project credentials from Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyA3EtFtxbb0aV6O6Sedr1KF29QOX5F2aHc",
+  authDomain: "tactix-marketing-ai.firebaseapp.com",
+  projectId: "tactix-marketing-ai",
+  storageBucket: "tactix-marketing-ai.firebasestorage.app",
+  messagingSenderId: "733893806970",
+  appId: "1:733893806970:web:49e31dbcfb5ca3832b64c3",
 };
 
 // Initialize Firebase
