@@ -9,13 +9,14 @@ import {
   Shield,
   HelpCircle,
   ChevronRight,
-  Crown
+  Crown,
+  Edit3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useOnboarding } from '../contexts/OnboardingContext';
 import { useAgents } from '../contexts/AgentContext';
 import FloatingNavBar from '../components/FloatingNavBar';
-import tactixLogo from '../assets/tactix-logo.png';
+import AppHeader from '../components/AppHeader';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,7 +36,13 @@ const ProfilePage: React.FC = () => {
     navigate('/login');
   };
 
+  const handleEditPreferences = () => {
+    resetOnboarding();
+    navigate('/onboarding');
+  };
+
   const menuItems = [
+    { icon: Edit3, label: 'Edit Preferences', action: handleEditPreferences },
     { icon: Settings, label: 'Account Settings', action: () => {} },
     { icon: Bell, label: 'Notifications', action: () => {} },
     { icon: Shield, label: 'Privacy & Security', action: () => {} },
@@ -44,17 +51,9 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header */}
-      <header className="gradient-navy px-6 pt-8 pb-20">
-        <div className="container max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 page-transition">
-            <img src={tactixLogo} alt="TACTIX" className="w-10 h-10" />
-            <span className="font-display font-bold text-xl text-primary-foreground">Profile</span>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
-      <main className="container max-w-4xl mx-auto px-6 -mt-12">
+      <main className="container max-w-4xl mx-auto px-6 pt-6">
         {/* Profile Card */}
         <div className="glass-card p-6 mb-6 slide-up">
           <div className="flex items-center gap-4">
@@ -88,8 +87,8 @@ const ProfilePage: React.FC = () => {
               <div className="flex items-center gap-3">
                 <Crown className="w-6 h-6 text-accent" />
                 <div className="text-left">
-                  <p className="font-medium text-foreground">Upgrade to Pro</p>
-                  <p className="text-xs text-muted-foreground">Unlock all AI agents</p>
+                  <p className="font-medium text-foreground">Unlock AI Agents</p>
+                  <p className="text-xs text-muted-foreground">Pay-per-addon from ₹199</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-accent group-hover:translate-x-1 transition-transform" />

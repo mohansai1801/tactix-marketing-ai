@@ -5,8 +5,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { useOnboarding } from '../contexts/OnboardingContext';
 import { useAgents } from '../contexts/AgentContext';
 import FloatingNavBar from '../components/FloatingNavBar';
+import AppHeader from '../components/AppHeader';
 import AgentCard from '../components/AgentCard';
-import tactixLogo from '../assets/tactix-logo.png';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,29 +46,21 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header */}
-      <header className="gradient-navy px-6 pt-8 pb-16">
-        <div className="container max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8 page-transition">
-            <div className="flex items-center gap-3">
-              <img src={tactixLogo} alt="TACTIX" className="w-10 h-10" />
-              <span className="font-display font-bold text-xl text-primary-foreground">TACTIX</span>
-            </div>
-          </div>
+      <AppHeader />
 
-          {/* Welcome Section */}
-          <div className="slide-up">
-            <p className="text-accent text-sm font-medium mb-2">Welcome back,</p>
-            <h1 className="font-display font-bold text-3xl text-primary-foreground mb-4">
-              {user?.displayName || 'Marketer'} 👋
-            </h1>
-            <p className="text-primary-foreground/70 text-lg">
-              Your {getBusinessLabel(data.businessType)} business is set up for{' '}
-              <span className="text-accent font-medium">{getGoalLabel(data.primaryGoal)}</span>.
-            </p>
-          </div>
+      {/* Welcome Section */}
+      <div className="gradient-navy px-6 pb-16 -mt-1">
+        <div className="container max-w-4xl mx-auto slide-up">
+          <p className="text-accent text-sm font-medium mb-2">Welcome back,</p>
+          <h1 className="font-display font-bold text-3xl text-primary-foreground mb-4">
+            {user?.displayName || 'Marketer'}
+          </h1>
+          <p className="text-primary-foreground/70 text-lg">
+            Your {getBusinessLabel(data.businessType)} business is set up for{' '}
+            <span className="text-accent font-medium">{getGoalLabel(data.primaryGoal)}</span>.
+          </p>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <main className="container max-w-4xl mx-auto px-6 -mt-8">

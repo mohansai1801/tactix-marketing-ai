@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, LayoutDashboard, BarChart3, User, Sparkles } from 'lucide-react';
+import { Home, LayoutDashboard, BarChart3, Sparkles } from 'lucide-react';
 
 const FloatingNavBar: React.FC = () => {
   const location = useLocation();
@@ -15,7 +15,7 @@ const FloatingNavBar: React.FC = () => {
 
   return (
     <nav className="floating-nav">
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -37,16 +37,6 @@ const FloatingNavBar: React.FC = () => {
             <span className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-accent rounded-full animate-pulse" />
           </div>
           <span className="text-xs mt-1 font-medium">Ideas</span>
-        </NavLink>
-
-        {/* Profile */}
-        <NavLink
-          to="/profile"
-          className={`nav-item ${isActive('/profile') ? 'active' : ''}`}
-        >
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-accent to-cyan-accent flex items-center justify-center">
-            <User className="w-4 h-4 text-primary-foreground" />
-          </div>
         </NavLink>
       </div>
     </nav>
