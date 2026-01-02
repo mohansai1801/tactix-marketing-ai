@@ -1,4 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { 
+  User as FirebaseUser,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface User {
   id: string;
@@ -29,40 +37,66 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Helper to convert Firebase user to our User type
+const formatUser = (firebaseUser: FirebaseUser): User => ({
+  id: firebaseUser.uid,
+  email: firebaseUser.email || '',
+  displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
+});
+
+// Helper to parse Firebase auth errors
+const getAuthErrorMessage = (errorCode: string): string => {
+  switch (errorCode) {
+    case 'auth/email-already-in-use':
+      return 'This email is already registered. Please login instead.';
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/operation-not-allowed':
+      return 'Email/password authentication is not enabled.';
+    case 'auth/weak-password':
+      return 'Password must be at least 6 characters.';
+    case 'auth/user-disabled':
+      return 'This account has been disabled.';
+    case 'auth/user-not-found':
+      return 'No account found with this email.';
+    case 'auth/wrong-password':
+      return 'Incorrect password. Please try again.';
+    case 'auth/invalid-credential':
+      return 'Invalid email or password.';
+    case 'auth/too-many-requests':
+      return 'Too many failed attempts. Please try again later.';
+    default:
+      return 'Authentication failed. Please try again.';
+  }
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session (simulated)
-    const storedUser = localStorage.getItem('tactix_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(formatUser(firebaseUser));
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    // Cleanup subscription
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      // Simulated Firebase Auth - in production, replace with actual Firebase
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (password.length < 6) {
-        return { success: false, error: 'Password must be at least 6 characters' };
-      }
-
-      const newUser: User = {
-        id: `user_${Date.now()}`,
-        email,
-        displayName: email.split('@')[0],
-      };
-      
-      setUser(newUser);
-      localStorage.setItem('tactix_user', JSON.stringify(newUser));
+      await signInWithEmailAndPassword(auth, email, password);
       return { success: true };
-    } catch (error) {
-      return { success: false, error: 'Login failed. Please try again.' };
+    } catch (error: any) {
+      const errorCode = error.code || '';
+      return { success: false, error: getAuthErrorMessage(errorCode) };
     } finally {
       setIsLoading(false);
     }
@@ -71,32 +105,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     try {
-      // Simulated Firebase Auth
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (password.length < 6) {
-        return { success: false, error: 'Password must be at least 6 characters' };
-      }
-
-      const newUser: User = {
-        id: `user_${Date.now()}`,
-        email,
-        displayName: email.split('@')[0],
-      };
-      
-      setUser(newUser);
-      localStorage.setItem('tactix_user', JSON.stringify(newUser));
+      await createUserWithEmailAndPassword(auth, email, password);
       return { success: true };
-    } catch (error) {
-      return { success: false, error: 'Signup failed. Please try again.' };
+    } catch (error: any) {
+      const errorCode = error.code || '';
+      return { success: false, error: getAuthErrorMessage(errorCode) };
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('tactix_user');
+    signOut(auth);
     localStorage.removeItem('tactix_onboarding');
     localStorage.removeItem('tactix_agents');
   };
