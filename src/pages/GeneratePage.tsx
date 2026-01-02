@@ -5,7 +5,6 @@ import {
   RefreshCw, 
   Copy, 
   Check, 
-  ArrowLeft,
   Lightbulb,
   Instagram,
   Linkedin,
@@ -16,7 +15,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useOnboarding } from '../contexts/OnboardingContext';
 import { useToast } from '../hooks/use-toast';
 import FloatingNavBar from '../components/FloatingNavBar';
-import tactixLogo from '../assets/tactix-logo.png';
+import AppHeader from '../components/AppHeader';
 
 const GeneratePage: React.FC = () => {
   const navigate = useNavigate();
@@ -105,31 +104,26 @@ const GeneratePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header */}
-      <header className="gradient-navy px-6 pt-8 pb-16">
-        <div className="container max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 page-transition">
-            <img src={tactixLogo} alt="TACTIX" className="w-10 h-10" />
-            <span className="font-display font-bold text-xl text-primary-foreground">Idea Generator</span>
-          </div>
+      <AppHeader />
 
-          <div className="mt-8 slide-up">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                <Lightbulb className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h1 className="font-display font-bold text-2xl text-primary-foreground">
-                  Fresh Marketing Ideas
-                </h1>
-                <p className="text-primary-foreground/60">
-                  AI-powered suggestions tailored to your business
-                </p>
-              </div>
+      {/* Hero Section */}
+      <div className="gradient-navy px-6 pb-16 -mt-1">
+        <div className="container max-w-4xl mx-auto slide-up">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+              <Lightbulb className="w-6 h-6 text-accent" />
+            </div>
+            <div>
+              <h1 className="font-display font-bold text-2xl text-primary-foreground">
+                Fresh Marketing Ideas
+              </h1>
+              <p className="text-primary-foreground/60">
+                AI-powered suggestions tailored to your business
+              </p>
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
       <main className="container max-w-4xl mx-auto px-6 -mt-8">
         {/* Generate Button */}

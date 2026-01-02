@@ -13,7 +13,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useOnboarding } from '../contexts/OnboardingContext';
 import FloatingNavBar from '../components/FloatingNavBar';
-import tactixLogo from '../assets/tactix-logo.png';
+import AppHeader from '../components/AppHeader';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 const AnalyticsPage: React.FC = () => {
@@ -78,15 +78,7 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Header */}
-      <header className="gradient-navy px-6 pt-8 pb-6">
-        <div className="container max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 page-transition">
-            <img src={tactixLogo} alt="TACTIX" className="w-10 h-10" />
-            <span className="font-display font-bold text-xl text-primary-foreground">Analytics</span>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="container max-w-4xl mx-auto px-6 py-6">
         {/* Simulated Badge */}
