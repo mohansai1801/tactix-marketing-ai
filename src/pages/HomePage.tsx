@@ -49,21 +49,27 @@ const HomePage: React.FC = () => {
       <AppHeader />
 
       {/* Welcome Section */}
-      <div className="gradient-navy px-6 pb-16 -mt-1">
-        <div className="container max-w-4xl mx-auto slide-up">
-          <p className="text-accent text-sm font-medium mb-2">Welcome back,</p>
-          <h1 className="font-display font-bold text-3xl text-primary-foreground mb-4">
-            {user?.displayName || 'Marketer'}
-          </h1>
-          <p className="text-primary-foreground/70 text-lg">
-            Your {getBusinessLabel(data.businessType)} business is set up for{' '}
-            <span className="text-accent font-medium">{getGoalLabel(data.primaryGoal)}</span>.
-          </p>
+      <div className="px-6 pt-8 pb-6">
+        <div className="container max-w-4xl mx-auto">
+          <div className="glass-card p-6 relative overflow-hidden slide-up">
+            <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full gradient-accent opacity-10 blur-2xl" />
+            <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-accent/5 blur-xl" />
+            <div className="relative">
+              <p className="text-accent text-sm font-semibold mb-1 tracking-wide uppercase">Welcome back</p>
+              <h1 className="font-display font-bold text-2xl md:text-3xl text-foreground mb-3">
+                {user?.displayName || 'Marketer'}
+              </h1>
+              <p className="text-muted-foreground">
+                Your <span className="text-foreground font-medium">{getBusinessLabel(data.businessType)}</span> business is set up for{' '}
+                <span className="text-accent font-semibold">{getGoalLabel(data.primaryGoal)}</span>.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="container max-w-4xl mx-auto px-6 -mt-8">
+      <main className="container max-w-4xl mx-auto px-6">
         {/* Action Cards */}
         <div className="grid md:grid-cols-2 gap-4 mb-10">
           <button
