@@ -1,20 +1,19 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 // Firebase configuration - these are publishable keys (safe for client-side)
-// ⚠️ IMPORTANT: Replace these with YOUR Firebase project credentials from Firebase Console
-// Go to: Firebase Console → Project Settings → General → Your apps → Web app
+// Replace with your Firebase project credentials from Firebase Console
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",           // Replace with your API key
-  authDomain: "YOUR_PROJECT.firebaseapp.com", // Replace with your auth domain
-  projectId: "YOUR_PROJECT_ID",               // Replace with your project ID
-  storageBucket: "YOUR_PROJECT.appspot.com",  // Replace with your storage bucket
-  messagingSenderId: "YOUR_SENDER_ID",        // Replace with your sender ID
-  appId: "YOUR_APP_ID",                       // Replace with your app ID
+  apiKey: "AIzaSyA3EtFtxbb0aV6O6Sedr1KF29QOX5F2aHc",
+  authDomain: "tactix-marketing-ai.firebaseapp.com",
+  projectId: "tactix-marketing-ai",
+  storageBucket: "tactix-marketing-ai.firebasestorage.app",
+  messagingSenderId: "733893806970",
+  appId: "1:733893806970:web:49e31dbcfb5ca3832b64c3",
 };
 
-// Initialize Firebase (prevent duplicate initialization during HMR)
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
