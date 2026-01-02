@@ -9,7 +9,7 @@ const AppHeader: React.FC = () => {
   const isProfilePage = location.pathname === '/profile';
 
   return (
-    <header className="bg-background/80 backdrop-blur-xl border-b border-border/50 px-6 py-4 sticky top-0 z-40">
+    <header className="bg-primary/95 backdrop-blur-xl border-b border-secondary/30 px-6 py-4 sticky top-0 z-40">
       <div className="container max-w-4xl mx-auto">
         <div className="flex items-center justify-between">
           {/* Left: Logo + Brand */}
@@ -25,10 +25,10 @@ const AppHeader: React.FC = () => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display font-bold text-xl text-foreground tracking-wide">
+              <span className="font-display font-bold text-xl text-primary-foreground tracking-wide">
                 TACTIX
               </span>
-              <span className="text-[10px] text-muted-foreground font-medium tracking-widest uppercase">
+              <span className="text-[10px] text-accent font-medium tracking-widest uppercase">
                 Insights for Growth
               </span>
             </div>
@@ -39,8 +39,8 @@ const AppHeader: React.FC = () => {
             onClick={() => navigate('/profile')}
             className={`flex items-center gap-2 p-2 rounded-xl transition-all duration-300 ${
               isProfilePage 
-                ? 'bg-accent/10 ring-2 ring-accent/30' 
-                : 'hover:bg-muted/50'
+                ? 'bg-accent/20' 
+                : 'hover:bg-secondary/50'
             }`}
           >
             <div className="w-10 h-10 rounded-full gradient-accent flex items-center justify-center shadow-md">
