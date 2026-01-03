@@ -3,6 +3,7 @@ import {
   User as FirebaseUser,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInAnonymously,
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
@@ -17,9 +18,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isGuest: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signup: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  guestLogin: () => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
 }
 
@@ -40,8 +43,8 @@ interface AuthProviderProps {
 // Helper to convert Firebase user to our User type
 const formatUser = (firebaseUser: FirebaseUser): User => ({
   id: firebaseUser.uid,
-  email: firebaseUser.email || '',
-  displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
+  email: firebaseUser.email || (firebaseUser.isAnonymous ? 'Guest User' : ''),
+  displayName: firebaseUser.displayName || (firebaseUser.isAnonymous ? 'Guest' : firebaseUser.email?.split('@')[0]),
 });
 
 // Helper to parse Firebase auth errors
@@ -72,6 +75,7 @@ const getAuthErrorMessage = (errorCode: string): string => {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -79,8 +83,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser(formatUser(firebaseUser));
+        setIsGuest(firebaseUser.isAnonymous);
       } else {
         setUser(null);
+        setIsGuest(false);
       }
       setIsLoading(false);
     });
@@ -115,6 +121,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const guestLogin = async (): Promise<{ success: boolean; error?: string }> => {
+    setIsLoading(true);
+    try {
+      await signInAnonymously(auth);
+      return { success: true };
+    } catch (error: any) {
+      const errorCode = error.code || '';
+      return { success: false, error: getAuthErrorMessage(errorCode) };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     signOut(auth);
     localStorage.removeItem('tactix_onboarding');
@@ -122,7 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isGuest, isLoading, login, signup, guestLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
