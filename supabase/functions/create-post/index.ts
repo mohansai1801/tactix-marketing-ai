@@ -2,6 +2,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
 
 const allowedOrigins = [
   'https://nhniqkmyliwfqtowivsq.lovableproject.com',
@@ -36,7 +37,6 @@ serve(async (req) => {
   try {
     const { ideaTitle, ideaContent, platform, tone } = await req.json() as CreatePostRequest;
 
-    // Validate required input
     if (!ideaTitle?.trim() || !ideaContent?.trim() || !platform) {
       return new Response(JSON.stringify({ error: 'Invalid request: missing required fields' }), {
         status: 400,
@@ -79,18 +79,17 @@ Return your response as JSON with:
 - hashtags: Array of relevant hashtags (without #)
 - callToAction: A suggested call-to-action
 - tips: Array of 2-3 tips for maximizing engagement with this post
-- imagePrompt: A detailed prompt for generating an image that would accompany this post (describe the visual style, colors, elements)`;
+- imagePrompt: A detailed prompt for generating an image that would accompany this post`;
 
     const userPrompt = `Create a ${platform} post based on this marketing idea:
 
 Title: ${ideaTitle}
 Concept: ${ideaContent}
 
-Generate engaging, ready-to-publish content optimized for ${platform}. Also provide an image prompt that would create a visually stunning image to accompany this post.`;
+Generate engaging, ready-to-publish content optimized for ${platform}.`;
 
     console.log('Calling OpenAI for text generation...');
 
-    // Generate post content
     const textResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -146,38 +145,54 @@ Generate engaging, ready-to-publish content optimized for ${platform}. Also prov
       };
     }
 
-    // Generate image using DALL-E
+    // Generate image using Lovable AI Gateway (Gemini)
     let imageUrl = null;
     const imagePrompt = post.imagePrompt || `Professional marketing visual for: ${ideaTitle}. Modern, clean design with vibrant colors, suitable for ${platform}.`;
     
-    console.log('Generating image with prompt:', imagePrompt);
+    console.log('Generating image with Lovable AI Gateway, prompt:', imagePrompt);
 
-    try {
-      const imageResponse = await fetch('https://api.openai.com/v1/images/generations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'dall-e-3',
-          prompt: `Create a visually stunning, professional marketing image: ${imagePrompt}. Style: Clean, modern, high-quality, suitable for social media. No text or words in the image.`,
-          n: 1,
-          size: '1024x1024',
-          quality: 'standard',
-        }),
-      });
+    if (!lovableApiKey) {
+      console.error('LOVABLE_API_KEY not configured, skipping image generation');
+    } else {
+      try {
+        const imageResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${lovableApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash-image-preview',
+            messages: [
+              { 
+                role: 'user', 
+                content: `Generate a visually stunning, professional marketing image: ${imagePrompt}. Style: Clean, modern, high-quality, suitable for social media ${platform}. No text or words in the image. Aspect ratio: 1:1 square format.`
+              }
+            ],
+            modalities: ['image', 'text'],
+          }),
+        });
 
-      if (imageResponse.ok) {
-        const imageData = await imageResponse.json();
-        imageUrl = imageData.data?.[0]?.url;
-        console.log('Image generated successfully');
-      } else {
-        const imageError = await imageResponse.text();
-        console.error('Image generation error:', imageResponse.status, imageError);
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          console.log('Lovable AI image response received');
+          
+          // Extract base64 image from response
+          const generatedImage = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+          if (generatedImage) {
+            imageUrl = generatedImage;
+            console.log('Image generated successfully via Lovable AI');
+          } else {
+            console.log('No image in response, checking alternative format');
+            console.log('Response structure:', JSON.stringify(imageData, null, 2).substring(0, 500));
+          }
+        } else {
+          const imageError = await imageResponse.text();
+          console.error('Lovable AI image generation error:', imageResponse.status, imageError);
+        }
+      } catch (imageError) {
+        console.error('Failed to generate image:', imageError);
       }
-    } catch (imageError) {
-      console.error('Failed to generate image:', imageError);
     }
 
     return new Response(JSON.stringify({ 
