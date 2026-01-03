@@ -29,6 +29,8 @@ interface GeneratedPost {
   hashtags: string[];
   callToAction: string;
   tips: string[];
+  imageUrl?: string;
+  imagePrompt?: string;
 }
 
 const platforms = [
@@ -284,6 +286,17 @@ const CreatePostPage: React.FC = () => {
 
             {generatedPost ? (
               <div className="space-y-4">
+                {/* Generated Image */}
+                {generatedPost.imageUrl && (
+                  <div className="rounded-xl overflow-hidden border border-border">
+                    <img 
+                      src={generatedPost.imageUrl} 
+                      alt="Generated post image"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                )}
+
                 {/* Headline */}
                 {generatedPost.headline && (
                   <div className="p-4 bg-accent/5 rounded-xl border border-accent/10">
