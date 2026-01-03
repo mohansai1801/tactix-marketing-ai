@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Eye, EyeOff, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../hooks/use-toast';
 import tactixLogo from '../assets/tactix-logo.png';
@@ -10,7 +10,8 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login, isAuthenticated } = useAuth();
+  const [isGuestLoading, setIsGuestLoading] = useState(false);
+  const { login, guestLogin, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -41,6 +42,27 @@ const LoginPage: React.FC = () => {
     }
     
     setIsLoading(false);
+  };
+
+  const handleGuestLogin = async () => {
+    setIsGuestLoading(true);
+    const result = await guestLogin();
+    
+    if (result.success) {
+      toast({
+        title: "Welcome, Guest!",
+        description: "You're now exploring TACTIX as a guest.",
+      });
+      navigate('/home');
+    } else {
+      toast({
+        title: "Guest login failed",
+        description: result.error,
+        variant: "destructive",
+      });
+    }
+    
+    setIsGuestLoading(false);
   };
 
   return (
@@ -124,6 +146,33 @@ const LoginPage: React.FC = () => {
             </button>
           </div>
 
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-secondary/50"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-secondary/20 text-primary-foreground/60 rounded-full">or</span>
+            </div>
+          </div>
+
+          {/* Guest Login Button */}
+          <button
+            type="button"
+            onClick={handleGuestLogin}
+            disabled={isGuestLoading || isLoading}
+            className="w-full bg-secondary/30 border border-secondary/50 hover:bg-secondary/50 text-primary-foreground py-4 rounded-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGuestLoading ? (
+              <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+            ) : (
+              <>
+                <User className="w-5 h-5" />
+                Continue as Guest
+              </>
+            )}
+          </button>
+
           {/* Sign Up Link */}
           <p className="text-center mt-6 text-primary-foreground/60">
             Don't have an account?{' '}
@@ -136,9 +185,9 @@ const LoginPage: React.FC = () => {
           </p>
         </form>
 
-        {/* Demo Note */}
+        {/* Guest Note */}
         <p className="text-center mt-6 text-primary-foreground/40 text-sm">
-          Demo mode: Use any email and password (6+ chars)
+          Guest users can explore all features without signing up
         </p>
       </div>
 
