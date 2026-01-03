@@ -3,10 +3,20 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const allowedOrigins = [
+  'https://nhniqkmyliwfqtowivsq.lovableproject.com',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  const isAllowed = origin && (allowedOrigins.includes(origin) || origin.endsWith('.lovableproject.com'));
+  return {
+    'Access-Control-Allow-Origin': isAllowed ? origin : '',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
 
 interface OnboardingData {
   businessType: string;
@@ -17,9 +27,22 @@ interface OnboardingData {
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Reject requests from non-allowed origins
+  const isAllowedOrigin = origin && (allowedOrigins.includes(origin) || origin.endsWith('.lovableproject.com'));
+  if (!isAllowedOrigin) {
+    console.log('Rejected request from unauthorized origin:', origin);
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), {
+      status: 403,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -27,6 +50,14 @@ serve(async (req) => {
       onboardingData: OnboardingData; 
       category?: string;
     };
+
+    // Validate required input
+    if (!onboardingData || !onboardingData.businessType) {
+      return new Response(JSON.stringify({ error: 'Invalid request: missing onboarding data' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     console.log('Generating ideas for:', onboardingData, 'Category:', category);
 
