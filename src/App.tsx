@@ -17,6 +17,7 @@ import DashboardPage from "./pages/DashboardPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import PaymentPage from "./pages/PaymentPage";
 import GeneratePage from "./pages/GeneratePage";
+import CreatePostPage from "./pages/CreatePostPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/analytics" element={<AnalyticsPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/generate" element={<GeneratePage />} />
+                <Route path="/create-post" element={<CreatePostPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
