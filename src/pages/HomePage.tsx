@@ -70,7 +70,7 @@ const HomePage: React.FC = () => {
                 </span>
               </div>
               <h1 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-2">
-                Welcome back, <span className="text-primary-foreground font-extrabold">{user?.displayName?.split(' ')[0] || 'Marketer'}</span>
+                Welcome back, <span className="text-accent font-extrabold">{user?.displayName?.split(' ')[0] || 'Marketer'}</span>
               </h1>
               <p className="text-muted-foreground text-lg max-w-xl">
                 Your <span className="text-foreground font-medium">{getBusinessLabel(data.businessType)}</span> strategy is optimized for{' '}
